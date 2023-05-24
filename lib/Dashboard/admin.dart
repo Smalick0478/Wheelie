@@ -43,7 +43,7 @@ class _AdminState extends State<Admin> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Padding(
+          const Padding(
             padding: const EdgeInsets.all(16.0),
             child: Text(
               "Registered Users",

@@ -15,34 +15,7 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              "Please press the subscribe button for more videos",
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 20,
-              ),
-            ),
-            SizedBox(
-              height: 40,
-            ),
-            MaterialButton(
-              color: Colors.red,
-              onPressed: () {},
-              child: Text(
-                'Subscribe',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 30,
-                ),
-              ),
-            ),
-          ],
-        ),
+       
       ),
     );
   }

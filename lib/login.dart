@@ -1,9 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+
+//Dashboard Files
 import './Dashboard/driver.dart';
 import './Dashboard/admin.dart';
 import './Dashboard/parent.dart';
+//Registration Files
 import 'driverRegisteration.dart';
 import 'parentRegisteration.dart';
 
@@ -27,7 +30,7 @@ class _LoginPageState extends State<LoginPage> {
         child: Column(
           children: <Widget>[
             Container(
-              color: Color.fromARGB(255, 0, 0, 0),
+              color: Color.fromARGB(255, 255, 255, 255),
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height * 0.70,
               child: Center(
@@ -40,13 +43,13 @@ class _LoginPageState extends State<LoginPage> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         SizedBox(
-                          height: 30,
+                          height: 50,
                         ),
                         Text(
                           "Login",
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
-                            color: Colors.white,
+                            color: Color.fromARGB(255, 0, 0, 0),
                             fontSize: 40,
                           ),
                         ),
@@ -63,11 +66,13 @@ class _LoginPageState extends State<LoginPage> {
                             contentPadding: const EdgeInsets.only(
                                 left: 14.0, bottom: 8.0, top: 8.0),
                             focusedBorder: OutlineInputBorder(
-                              borderSide: new BorderSide(color: Colors.white),
+                              borderSide: new BorderSide(
+                                  color: Color.fromARGB(255, 0, 0, 0)),
                               borderRadius: new BorderRadius.circular(10),
                             ),
                             enabledBorder: UnderlineInputBorder(
-                              borderSide: new BorderSide(color: Colors.white),
+                              borderSide: new BorderSide(
+                                  color: Color.fromARGB(255, 0, 0, 0)),
                               borderRadius: new BorderRadius.circular(10),
                             ),
                           ),
@@ -111,11 +116,13 @@ class _LoginPageState extends State<LoginPage> {
                             contentPadding: const EdgeInsets.only(
                                 left: 14.0, bottom: 8.0, top: 15.0),
                             focusedBorder: OutlineInputBorder(
-                              borderSide: new BorderSide(color: Colors.white),
+                              borderSide: new BorderSide(
+                                  color: Color.fromARGB(255, 0, 0, 0)),
                               borderRadius: new BorderRadius.circular(10),
                             ),
                             enabledBorder: UnderlineInputBorder(
-                              borderSide: new BorderSide(color: Colors.white),
+                              borderSide: new BorderSide(
+                                  color: Color.fromARGB(255, 0, 0, 0)),
                               borderRadius: new BorderRadius.circular(10),
                             ),
                           ),
@@ -136,7 +143,7 @@ class _LoginPageState extends State<LoginPage> {
                           keyboardType: TextInputType.emailAddress,
                         ),
                         SizedBox(
-                          height: 20,
+                          height: 40,
                         ),
                         MaterialButton(
                           shape: RoundedRectangleBorder(
@@ -216,7 +223,7 @@ class _LoginPageState extends State<LoginPage> {
                             ),
                           ),
                         ),
-                        SizedBox(width: 10), // Add spacing between the buttons
+                        SizedBox(width: 70), // Add spacing between the buttons
                         MaterialButton(
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.all(
