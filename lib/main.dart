@@ -1,6 +1,7 @@
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:wheelie/login.dart';
+import 'package:wheelie/helpers/theme_colors.dart';
+import 'package:wheelie/pages/start_page.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -8,20 +9,18 @@ Future<void> main() async {
   runApp(MyApp());
 }
 
-class MyApp extends StatefulWidget {
-  @override
-  _MyAppState createState() => _MyAppState();
-}
-
-class _MyAppState extends State<MyApp> {
+class MyApp extends StatelessWidget {
+  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
+      title: 'Wheelie',
       theme: ThemeData(
-        primaryColor: Colors.blue[900],
+        primaryColor: ThemeColors.primaryColor,
+        scaffoldBackgroundColor: ThemeColors.scaffoldBgColor,
       ),
-      home: LoginPage(),
+      home: StartPage(),
     );
   }
 }
