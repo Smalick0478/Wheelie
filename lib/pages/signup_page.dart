@@ -389,7 +389,7 @@ class _SignUpPageState extends State<SignUpPage> {
                 ],
               ),
               content: Text(
-                'The entered email address is already registered.',
+                'The Entered Email Address is Already Registered.',
                 style: TextStyle(color: Colors.white),
               ),
               actions: [
