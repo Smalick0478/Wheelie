@@ -355,41 +355,125 @@ class _SignUpPageState extends State<SignUpPage> {
 
   void signUp(String fullname, String email, String phone, String password,
       String cnic, String role) async {
-    CircularProgressIndicator();
     if (_formKey.currentState!.validate()) {
-      await _auth
-          .createUserWithEmailAndPassword(email: email, password: password)
-          .then((value) =>
-              {postDetailsToFirestore(fullname, email, phone, role, cnic)})
-          .catchError((e) {});
+      try {
+        bool userExists = await isUserExistsInFirestore(email);
+
+        if (!userExists) {
+          // User is a new user, proceed with registration
+          final result = await FirebaseAuth.instance
+              .createUserWithEmailAndPassword(email: email, password: password);
+
+          if (result.additionalUserInfo!.isNewUser) {
+            // Store user details in Firestore
+            postDetailsToFirestore(fullname, email, phone, role, cnic);
+          }
+
+          Navigator.pushReplacement(
+              context, MaterialPageRoute(builder: (context) => LoginPage()));
+        } else {
+          // User is already registered, show dialog box
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              backgroundColor: Colors.black,
+              title: Row(
+                children: [
+                  Icon(Icons.close, color: Colors.red),
+                  SizedBox(width: 8),
+                  Text(
+                    'Email Already Registered',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ],
+              ),
+              content: Text(
+                'The entered email address is already registered.',
+                style: TextStyle(color: Colors.white),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: Text(
+                    'OK',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+              ],
+            ),
+          );
+        }
+      } catch (e) {
+        // Handle registration error
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            backgroundColor: Colors.black,
+            title: Row(
+              children: [
+                Icon(Icons.close, color: Colors.red),
+                SizedBox(width: 8),
+                Text(
+                  'Error Occurred',
+                  style: TextStyle(color: Colors.white),
+                ),
+              ],
+            ),
+            content: Text(
+              'Check Your Internet Connection\n or Try Again Later',
+              style: TextStyle(color: Colors.white),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: Text(
+                  'OK',
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+            ],
+          ),
+        );
+      }
     }
   }
 
-  postDetailsToFirestore(String fullname, String email, String phone,
+  void postDetailsToFirestore(String fullname, String email, String phone,
       String role, String cnic) async {
     FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
-    var user = _auth.currentUser;
-    CollectionReference ref = FirebaseFirestore.instance.collection('users');
+    var user = FirebaseAuth.instance.currentUser;
+    CollectionReference ref = firebaseFirestore.collection('users');
 
     if (role == "Driver") {
-      ref.doc(user!.uid).set({
-        'Name': _nameController.text,
-        'email': _emailController.text,
-        'Phone': _phoneController.text,
-        'cnic': _cnicController.text,
+      await ref.doc(user!.uid).set({
+        'Name': fullname,
+        'email': email,
+        'Phone': phone,
+        'cnic': cnic,
         'role': role,
       });
     } else if (role == "Parent") {
-      ref.doc(user!.uid).set({
-        'Name': _nameController.text,
-        'email': _emailController.text,
-        'Phone': _phoneController.text,
+      await ref.doc(user!.uid).set({
+        'Name': fullname,
+        'email': email,
+        'Phone': phone,
         'role': role,
       });
     }
+  }
 
-    Navigator.pushReplacement(
-        context, MaterialPageRoute(builder: (context) => LoginPage()));
+  Future<bool> isUserExistsInFirestore(String email) async {
+    CollectionReference usersCollection =
+        FirebaseFirestore.instance.collection('users');
+
+    var querySnapshot =
+        await usersCollection.where('email', isEqualTo: email).limit(1).get();
+
+    return querySnapshot.docs.isNotEmpty; // Returns true if the user exists
   }
 }
 
