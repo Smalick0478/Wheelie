@@ -6,6 +6,7 @@ import 'package:wheelie/helpers/theme_colors.dart';
 import 'package:wheelie/pages/signup_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:wheelie/pages/reset_password.dart';
 
 //dashboards
 import '../screens/dashboards/admin.dart';
@@ -25,6 +26,45 @@ class _LoginPageState extends State<LoginPage> {
   TextEditingController _emailController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
   final _auth = FirebaseAuth.instance;
+  //Error Dialog box for Invalid Email/Password
+  void showErrorDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: Colors.black,
+          title: Row(
+            children: [
+              Icon(Icons.close, color: Colors.red),
+              SizedBox(width: 8),
+              Text(
+                'Incorrect Email or Password',
+                style: TextStyle(color: Colors.white),
+              ),
+            ],
+          ),
+          content: Text(
+            'Please check your Email/Password',
+            style: TextStyle(color: Colors.white),
+          ),
+          actions: [
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                primary: Colors.black, // Set button background color to black
+              ),
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: Text(
+                'OK',
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,18 +76,27 @@ class _LoginPageState extends State<LoginPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  "Let's get you in!",
-                  style: GoogleFonts.poppins(
-                    color: ThemeColors.whiteTextColor,
-                    fontSize: FontSize.xxLarge,
-                    fontWeight: FontWeight.w600,
-                  ),
+                Row(
+                  children: [
+                    Text(
+                      "Login",
+                      style: GoogleFonts.poppins(
+                        color: ThemeColors.whiteTextColor,
+                        fontSize: FontSize.xxLarge,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    SizedBox(width: 8),
+                    Icon(
+                      Icons.account_circle_outlined,
+                      color: ThemeColors.whiteTextColor,
+                    ),
+                  ],
                 ),
                 Padding(
                   padding: const EdgeInsets.only(top: 7),
                   child: Text(
-                    "Login to your account.",
+                    "Track Your Kids.",
                     style: GoogleFonts.poppins(
                       color: ThemeColors.greyTextColor,
                       fontSize: FontSize.medium,
@@ -55,7 +104,11 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                 ),
-                SizedBox(height: 70),
+                SizedBox(height: 50),
+                Image(
+                  image: AssetImage('images/loginbg.png'),
+                  fit: BoxFit.contain,
+                ),
                 Form(
                   key: _formKey,
                   child: Column(
@@ -141,17 +194,32 @@ class _LoginPageState extends State<LoginPage> {
                         alignment: Alignment.centerRight,
                         child: Padding(
                           padding: const EdgeInsets.only(top: 12),
-                          child: Text(
-                            "Forgot password?",
-                            style: GoogleFonts.poppins(
-                              color: ThemeColors.greyTextColor,
-                              fontSize: FontSize.medium,
-                              fontWeight: FontWeight.w600,
-                              decoration: TextDecoration.underline,
+                          child: ElevatedButton(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => PasswordResetPage(),
+                                ),
+                              );
+                            },
+                            style: ButtonStyle(
+                              backgroundColor: MaterialStateProperty.all<Color>(
+                                  Color.fromARGB(255, 12, 11, 12)),
+                            ),
+                            child: Text(
+                              "Forgot password?",
+                              style: GoogleFonts.poppins(
+                                color: ThemeColors.greyTextColor,
+                                fontSize: FontSize.medium,
+                                fontWeight: FontWeight.w600,
+                                decoration: TextDecoration.underline,
+                              ),
                             ),
                           ),
                         ),
                       ),
+
                       SizedBox(height: 70),
                       MainButton(
                         text: 'Login',
@@ -163,13 +231,6 @@ class _LoginPageState extends State<LoginPage> {
                         backgroundColor: ThemeColors.YellowColor,
                       ),
                       SizedBox(height: 16),
-                      MainButton(
-                        text: 'Login with Google',
-                        backgroundColor: ThemeColors.whiteTextColor,
-                        textColor: ThemeColors.scaffoldBgColor,
-                        iconPath: 'images/google.png',
-                        onTap: () {},
-                      ),
                     ],
                   ),
                 ),
@@ -262,9 +323,9 @@ class _LoginPageState extends State<LoginPage> {
         route();
       } on FirebaseAuthException catch (e) {
         if (e.code == 'user-not-found') {
-          print('No user found for that email.');
+          showErrorDialog(context);
         } else if (e.code == 'wrong-password') {
-          print('Wrong password provided for that user.');
+          showErrorDialog(context);
         }
       }
     }
