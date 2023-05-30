@@ -7,6 +7,7 @@ import 'package:wheelie/pages/signup_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:wheelie/pages/reset_password.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 
 //dashboards
 import '../screens/dashboards/admin.dart';
@@ -315,12 +316,54 @@ class _LoginPageState extends State<LoginPage> {
   void signIn(String email, String password) async {
     if (_formKey.currentState!.validate()) {
       try {
-        UserCredential userCredential =
-            await FirebaseAuth.instance.signInWithEmailAndPassword(
-          email: email,
-          password: password,
-        );
-        route();
+        // Check if there is an internet connection
+        bool isConnected = await InternetConnectionChecker().hasConnection;
+        if (isConnected) {
+          // User is connected to the internet, proceed with login
+          UserCredential userCredential =
+              await FirebaseAuth.instance.signInWithEmailAndPassword(
+            email: email,
+            password: password,
+          );
+          route();
+        } else {
+          // User is not connected to the internet, show error dialog
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              backgroundColor: Colors.black,
+              title: Row(
+                children: [
+                  Icon(Icons.close, color: Colors.red),
+                  SizedBox(width: 8),
+                  Text(
+                    'No Internet Connection',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ],
+              ),
+              content: Text(
+                'Please check your internet connection and try again.',
+                style: TextStyle(color: Colors.white),
+              ),
+              actions: [
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    primary:
+                        Colors.black, // Set button background color to black
+                  ),
+                  onPressed: () {
+                    Navigator.pop(context); // Close the dialog
+                  },
+                  child: Text(
+                    'OK',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+              ],
+            ),
+          );
+        }
       } on FirebaseAuthException catch (e) {
         if (e.code == 'user-not-found') {
           showErrorDialog(context);
