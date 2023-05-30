@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:wheelie/helpers/theme_colors.dart';
-import 'package:wheelie/pages/start_page.dart';
+import 'package:wheelie/pages/splash_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 
 Future<void> main() async {
@@ -20,7 +20,7 @@ class MyApp extends StatelessWidget {
         primaryColor: ThemeColors.primaryColor,
         scaffoldBackgroundColor: ThemeColors.scaffoldBgColor,
       ),
-      home: StartPage(),
+      home: SplashScreenPage(),
     );
   }
 }
