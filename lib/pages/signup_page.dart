@@ -74,7 +74,7 @@ class _SignUpPageState extends State<SignUpPage> {
                       },
                       style: ElevatedButton.styleFrom(
                         primary: role == "Driver"
-                            ? ThemeColors.primaryColor
+                            ? ThemeColors.YellowColor
                             : Colors.black,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20),
@@ -84,7 +84,7 @@ class _SignUpPageState extends State<SignUpPage> {
                         'As a Driver',
                         style: TextStyle(
                           color: role == "Driver"
-                              ? ThemeColors.whiteTextColor
+                              ? ThemeColors.scaffoldBgColor
                               : ThemeColors.primaryColor,
                         ),
                       ),
@@ -98,7 +98,7 @@ class _SignUpPageState extends State<SignUpPage> {
                       },
                       style: ElevatedButton.styleFrom(
                         primary: role == "Parent"
-                            ? ThemeColors.primaryColor
+                            ? ThemeColors.YellowColor
                             : Colors.black,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20),
@@ -108,7 +108,7 @@ class _SignUpPageState extends State<SignUpPage> {
                         'As a Parent',
                         style: TextStyle(
                           color: role == "Parent"
-                              ? ThemeColors.whiteTextColor
+                              ? ThemeColors.scaffoldBgColor
                               : ThemeColors.primaryColor,
                         ),
                       ),
@@ -332,6 +332,7 @@ class _SignUpPageState extends State<SignUpPage> {
                       SizedBox(height: 70),
                       MainButton(
                         text: 'Sign Up',
+                        backgroundColor: ThemeColors.YellowColor,
                         onTap: () {
                           signUp(
                               _nameController.text,
