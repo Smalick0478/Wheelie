@@ -123,9 +123,9 @@ class DriverCard extends StatelessWidget {
     final data = driver.data() as Map<String, dynamic>;
 
     final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-    final currentName = data['name'] as String?;
+    final currentName = data['Name'] as String?;
     final currentEmail = data['email'] as String?;
-    final currentPhone = data['phone'] as String?;
+    final currentPhone = data['Phone'] as String?;
     final currentCnic = data['cnic'] as String?;
 
     showDialog(
