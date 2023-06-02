@@ -8,6 +8,7 @@ import 'package:wheelie/helpers/font_size.dart';
 import 'package:wheelie/helpers/theme_colors.dart';
 import 'package:wheelie/pages/login_page.dart';
 import 'package:flutter/services.dart';
+import 'package:wheelie/screens/dashboards/admin/cnic_formatter.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({Key? key}) : super(key: key);
@@ -475,33 +476,5 @@ class _SignUpPageState extends State<SignUpPage> {
         await usersCollection.where('email', isEqualTo: email).limit(1).get();
 
     return querySnapshot.docs.isNotEmpty; // Returns true if the user exists
-  }
-}
-
-class CNICNumberFormatter extends TextInputFormatter {
-  @override
-  TextEditingValue formatEditUpdate(
-      TextEditingValue oldValue, TextEditingValue newValue) {
-    final text = newValue.text;
-
-    // Remove all non-digit characters from the text
-    final digitsOnlyText = text.replaceAll(RegExp(r'[^0-9]'), '');
-
-    // Insert hyphens at the desired positions
-    String formattedText = '';
-    for (int i = 0; i < digitsOnlyText.length; i++) {
-      if (i == 5 || i == 12) {
-        formattedText += '-';
-      }
-      formattedText += digitsOnlyText[i];
-    }
-
-    return TextEditingValue(
-      text: formattedText,
-      selection: newValue.selection.copyWith(
-        baseOffset: formattedText.length,
-        extentOffset: formattedText.length,
-      ),
-    );
   }
 }
