@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:wheelie/components/main_button.dart';
 import 'package:wheelie/helpers/font_size.dart';
+import 'package:wheelie/helpers/no_internet_connection.dart';
 import 'package:wheelie/helpers/theme_colors.dart';
 import 'package:wheelie/pages/signup_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -328,41 +329,7 @@ class _LoginPageState extends State<LoginPage> {
           route();
         } else {
           // User is not connected to the internet, show error dialog
-          showDialog(
-            context: context,
-            builder: (context) => AlertDialog(
-              backgroundColor: Colors.black,
-              title: Row(
-                children: [
-                  Icon(Icons.close, color: Colors.red),
-                  SizedBox(width: 8),
-                  Text(
-                    'No Internet Connection',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                ],
-              ),
-              content: Text(
-                'Please check your internet connection and try again.',
-                style: TextStyle(color: Colors.white),
-              ),
-              actions: [
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    primary:
-                        Colors.black, // Set button background color to black
-                  ),
-                  onPressed: () {
-                    Navigator.pop(context); // Close the dialog
-                  },
-                  child: Text(
-                    'OK',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                ),
-              ],
-            ),
-          );
+          noInternetConnection(context);
         }
       } on FirebaseAuthException catch (e) {
         if (e.code == 'user-not-found') {
