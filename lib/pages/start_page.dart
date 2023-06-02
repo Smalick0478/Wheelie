@@ -6,6 +6,7 @@ import 'package:wheelie/helpers/font_size.dart';
 import 'package:wheelie/helpers/theme_colors.dart';
 import 'package:wheelie/pages/login_page.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
+import 'package:wheelie/helpers/no_internet_connection.dart';
 
 class StartPage extends StatefulWidget {
   const StartPage({Key? key}) : super(key: key);
@@ -95,35 +96,7 @@ class _StartPageState extends State<StartPage> {
                                     ),
                                   )
                               : () {
-                                  showDialog(
-                                    context: context,
-                                    builder: (context) => AlertDialog(
-                                      backgroundColor: Colors.black,
-                                      title: Row(
-                                        children: [
-                                          Icon(Icons.close, color: Colors.red),
-                                          SizedBox(width: 8),
-                                          Text('No Internet Connection',
-                                              style: TextStyle(
-                                                  color: Colors.white)),
-                                        ],
-                                      ),
-                                      content: Text(
-                                        'Please check your internet connection and try again.',
-                                        style: TextStyle(color: Colors.white),
-                                      ),
-                                      actions: [
-                                        TextButton(
-                                          onPressed: () {
-                                            Navigator.pop(context);
-                                          },
-                                          child: Text('OK',
-                                              style: TextStyle(
-                                                  color: Colors.white)),
-                                        ),
-                                      ],
-                                    ),
-                                  );
+                                  noInternetConnection(context);
                                 },
                           text: 'Get Started',
                           backgroundColor: Color.fromARGB(255, 248, 215, 68),

@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:wheelie/components/main_button.dart';
 import 'package:wheelie/helpers/font_size.dart';
+import 'package:wheelie/helpers/no_internet_connection.dart';
 import 'package:wheelie/helpers/theme_colors.dart';
 import 'package:wheelie/pages/login_page.dart';
 import 'package:flutter/services.dart';
@@ -409,37 +410,7 @@ class _SignUpPageState extends State<SignUpPage> {
         }
       } catch (e) {
         // Handle registration error
-        showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            backgroundColor: Colors.black,
-            title: Row(
-              children: [
-                Icon(Icons.close, color: Colors.red),
-                SizedBox(width: 8),
-                Text(
-                  'Error Occurred',
-                  style: TextStyle(color: Colors.white),
-                ),
-              ],
-            ),
-            content: Text(
-              'Check Your Internet Connection\n or Try Again Later',
-              style: TextStyle(color: Colors.white),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                child: Text(
-                  'OK',
-                  style: TextStyle(color: Colors.white),
-                ),
-              ),
-            ],
-          ),
-        );
+        noInternetConnection(context);
       }
     }
   }
