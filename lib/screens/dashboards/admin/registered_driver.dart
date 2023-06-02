@@ -27,6 +27,7 @@ class RegisteredDriverScreen extends StatelessWidget {
             itemBuilder: (context, index) {
               return Column(
                 children: [
+                  SizedBox(height: 16),
                   DriverCard(driver: drivers[index]),
                   SizedBox(height: 16),
                 ],
