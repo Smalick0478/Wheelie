@@ -10,9 +10,9 @@ import 'package:wheelie/pages/reset_password.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 
 //dashboards
-import '../screens/dashboards/admin.dart';
-import '../screens/dashboards/driver.dart';
-import '../screens/dashboards/parent.dart';
+import 'package:wheelie/screens/dashboards/admin/admin.dart';
+import 'package:wheelie/screens/dashboards/driver/driver.dart';
+import 'package:wheelie/screens/dashboards/parent/parent.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -39,13 +39,13 @@ class _LoginPageState extends State<LoginPage> {
               Icon(Icons.close, color: Colors.red),
               SizedBox(width: 8),
               Text(
-                'Incorrect Email or Password',
+                'Error Occurred',
                 style: TextStyle(color: Colors.white),
               ),
             ],
           ),
           content: Text(
-            'Please check your Email/Password',
+            'Incorrect Email/Password',
             style: TextStyle(color: Colors.white),
           ),
           actions: [
@@ -301,7 +301,7 @@ class _LoginPageState extends State<LoginPage> {
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-              builder: (context) => Admin(),
+              builder: (context) => AdminDashboard(),
             ),
           );
         } else {
