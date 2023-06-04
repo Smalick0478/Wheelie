@@ -1,9 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:wheelie/helpers/cnic_formatter.dart';
 import 'package:wheelie/helpers/font_size.dart';
 import 'package:wheelie/helpers/theme_colors.dart';
-import 'package:wheelie/screens/dashboards/admin/cnic_formatter.dart';
 import 'package:flutter/services.dart';
 
 class RegisteredDriverScreen extends StatelessWidget {
