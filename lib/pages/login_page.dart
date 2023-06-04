@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:wheelie/components/main_button.dart';
+import 'package:wheelie/helpers/error_dialog_box.dart';
 import 'package:wheelie/helpers/font_size.dart';
 import 'package:wheelie/helpers/no_internet_connection.dart';
 import 'package:wheelie/helpers/theme_colors.dart';
@@ -28,45 +29,6 @@ class _LoginPageState extends State<LoginPage> {
   TextEditingController _emailController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
   final _auth = FirebaseAuth.instance;
-  //Error Dialog box for Invalid Email/Password
-  void showErrorDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          backgroundColor: Colors.black,
-          title: Row(
-            children: [
-              Icon(Icons.close, color: Colors.red),
-              SizedBox(width: 8),
-              Text(
-                'Error Occurred',
-                style: TextStyle(color: Colors.white),
-              ),
-            ],
-          ),
-          content: Text(
-            'Incorrect Email/Password',
-            style: TextStyle(color: Colors.white),
-          ),
-          actions: [
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                primary: Colors.black, // Set button background color to black
-              ),
-              onPressed: () {
-                Navigator.of(context).pop(); // Close the dialog
-              },
-              child: Text(
-                'OK',
-                style: TextStyle(color: Colors.white),
-              ),
-            ),
-          ],
-        );
-      },
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
