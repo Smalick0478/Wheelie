@@ -4,12 +4,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:wheelie/components/main_button.dart';
+import 'package:wheelie/helpers/cnic_formatter.dart';
 import 'package:wheelie/helpers/font_size.dart';
 import 'package:wheelie/helpers/no_internet_connection.dart';
 import 'package:wheelie/helpers/theme_colors.dart';
 import 'package:wheelie/pages/login_page.dart';
 import 'package:flutter/services.dart';
-import 'package:wheelie/screens/dashboards/admin/cnic_formatter.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({Key? key}) : super(key: key);
