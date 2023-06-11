@@ -25,10 +25,17 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
-
+  bool _isPasswordVisible = false;
   TextEditingController _emailController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
   final _auth = FirebaseAuth.instance;
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -125,15 +132,15 @@ class _LoginPageState extends State<LoginPage> {
                             return "Password cannot be empty";
                           }
                           if (!regex.hasMatch(value)) {
-                            return ("please enter valid password min. 6 character");
-                          } else {
-                            return null;
+                            return "Please enter a valid password with at least 6 characters";
                           }
+                          return null;
                         },
                         onSaved: (value) {
                           _passwordController.text = value!;
                         },
-                        obscureText: true,
+                        obscureText:
+                            !_isPasswordVisible, // Toggle the visibility of password based on _isPasswordVisible
                         style: GoogleFonts.poppins(
                           color: ThemeColors.whiteTextColor,
                         ),
@@ -151,6 +158,19 @@ class _LoginPageState extends State<LoginPage> {
                           border: OutlineInputBorder(
                             borderSide: BorderSide.none,
                             borderRadius: BorderRadius.all(Radius.circular(18)),
+                          ),
+                          suffixIcon: GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                _isPasswordVisible = !_isPasswordVisible;
+                              });
+                            },
+                            child: Icon(
+                              _isPasswordVisible
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
+                              color: ThemeColors.textFieldHintColor,
+                            ),
                           ),
                         ),
                       ),
