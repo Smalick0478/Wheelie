@@ -107,7 +107,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     if (querySnapshot.docs.isEmpty) {
       // No admin user found, create a new document
       await userCollection.add({
-        'name': newName,
+        'Name': newName,
         'profilepic': newProfilePicUrl,
         'role': 'Admin',
       });
@@ -115,7 +115,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       // Admin user found, update the existing document
       var docId = querySnapshot.docs.first.id;
       await userCollection.doc(docId).update({
-        'name': newName,
+        'Name': newName,
         'email': newEmail,
         'profilepic': newProfilePicUrl, // Use newProfilePicUrl here
       });
@@ -143,7 +143,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             }
 
             var user = documents[0].data();
-            var name = user['name'];
+            var name = user['Name'];
             var email = user['email'];
 
             return Center(
@@ -198,13 +198,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         }
 
                         var user = documents[0].data();
-                        var name = user['name'];
+                        var name = user['Name'];
                         var email = user['email'];
                         var imageUrl = user['profilepic'];
 
                         return CircleAvatar(
                           radius: 80.0,
-                          backgroundImage: imageUrl.isNotEmpty
+                          backgroundImage: (imageUrl != null)
                               ? NetworkImage(imageUrl)
                               : AssetImage('images/avatar.png')
                                   as ImageProvider,
