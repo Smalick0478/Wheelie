@@ -11,7 +11,7 @@ Future<String> fetchCurrentUserName() async {
         .get();
 
     if (userData.exists) {
-      return userData['name'];
+      return userData['Name'];
     }
   }
 
