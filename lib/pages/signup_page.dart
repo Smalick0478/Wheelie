@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:wheelie/components/main_button.dart';
 import 'package:wheelie/helpers/cnic_formatter.dart';
+import 'package:wheelie/helpers/error_dialog_box.dart';
 import 'package:wheelie/helpers/font_size.dart';
 import 'package:wheelie/helpers/no_internet_connection.dart';
 import 'package:wheelie/helpers/theme_colors.dart';
@@ -30,6 +31,17 @@ class _SignUpPageState extends State<SignUpPage> {
   TextEditingController _confirmpasswordController = TextEditingController();
 
   var role = "Driver";
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _emailController.dispose();
+    _phoneController.dispose();
+    _cnicController.dispose();
+    _passwordController.dispose();
+    _confirmpasswordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -279,6 +291,8 @@ class _SignUpPageState extends State<SignUpPage> {
                           return null;
                         },
                         obscureText: true,
+                        autocorrect: false,
+                        enableSuggestions: false,
                         style: GoogleFonts.poppins(
                           color: ThemeColors.whiteTextColor,
                         ),
@@ -310,6 +324,8 @@ class _SignUpPageState extends State<SignUpPage> {
                         },
                         onChanged: (value) {},
                         obscureText: true,
+                        autocorrect: false,
+                        enableSuggestions: false,
                         style: GoogleFonts.poppins(
                           color: ThemeColors.whiteTextColor,
                         ),
@@ -376,37 +392,7 @@ class _SignUpPageState extends State<SignUpPage> {
               context, MaterialPageRoute(builder: (context) => LoginPage()));
         } else {
           // User is already registered, show dialog box
-          showDialog(
-            context: context,
-            builder: (context) => AlertDialog(
-              backgroundColor: Colors.black,
-              title: Row(
-                children: [
-                  Icon(Icons.close, color: Colors.red),
-                  SizedBox(width: 8),
-                  Text(
-                    'Email Already Registered',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                ],
-              ),
-              content: Text(
-                'The Entered Email Address is Already Registered.',
-                style: TextStyle(color: Colors.white),
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  child: Text(
-                    'OK',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                ),
-              ],
-            ),
-          );
+          userAlreadyRegistered(context);
         }
       } catch (e) {
         // Handle registration error
