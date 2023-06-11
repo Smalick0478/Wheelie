@@ -31,6 +31,8 @@ class _SignUpPageState extends State<SignUpPage> {
   TextEditingController _confirmpasswordController = TextEditingController();
 
   var role = "Driver";
+  bool _isPasswordVisible = false;
+  bool _isConfirmPasswordVisible = false;
 
   @override
   void dispose() {
@@ -290,7 +292,10 @@ class _SignUpPageState extends State<SignUpPage> {
                           }
                           return null;
                         },
-                        obscureText: true,
+                        onSaved: (value) {
+                          _passwordController.text = value!;
+                        },
+                        obscureText: !_isPasswordVisible,
                         autocorrect: false,
                         enableSuggestions: false,
                         style: GoogleFonts.poppins(
@@ -311,6 +316,19 @@ class _SignUpPageState extends State<SignUpPage> {
                             borderSide: BorderSide.none,
                             borderRadius: BorderRadius.all(Radius.circular(18)),
                           ),
+                          suffixIcon: GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                _isPasswordVisible = !_isPasswordVisible;
+                              });
+                            },
+                            child: Icon(
+                              _isPasswordVisible
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
+                              color: ThemeColors.textFieldHintColor,
+                            ),
+                          ),
                         ),
                       ),
                       SizedBox(height: 16),
@@ -322,8 +340,10 @@ class _SignUpPageState extends State<SignUpPage> {
                           }
                           return null;
                         },
-                        onChanged: (value) {},
-                        obscureText: true,
+                        onSaved: (value) {
+                          _passwordController.text = value!;
+                        },
+                        obscureText: !_isConfirmPasswordVisible,
                         autocorrect: false,
                         enableSuggestions: false,
                         style: GoogleFonts.poppins(
@@ -343,6 +363,20 @@ class _SignUpPageState extends State<SignUpPage> {
                           border: OutlineInputBorder(
                             borderSide: BorderSide.none,
                             borderRadius: BorderRadius.all(Radius.circular(18)),
+                          ),
+                          suffixIcon: GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                _isConfirmPasswordVisible =
+                                    !_isConfirmPasswordVisible;
+                              });
+                            },
+                            child: Icon(
+                              _isConfirmPasswordVisible
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
+                              color: ThemeColors.textFieldHintColor,
+                            ),
                           ),
                         ),
                       ),
