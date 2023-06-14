@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "256008121604-i5ks693u20iji964v81hnvep2uu6af65.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.cust.wheelie",
+            "certificate_hash": "46ccfc2e6578c69b6ce47d7cd06b47d90738c97a"
+          }
+        },
+        {
           "client_id": "256008121604-83nmjet2dkng2ht1q6k7lbm54d45be14.apps.googleusercontent.com",
           "client_type": 3
         }
