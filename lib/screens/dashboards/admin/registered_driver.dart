@@ -9,9 +9,9 @@ import 'package:flutter/services.dart';
 class RegisteredDriverScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: ThemeColors.scaffoldBgColor,
-      child: StreamBuilder<QuerySnapshot>(
+    return Scaffold(
+      backgroundColor: ThemeColors.scaffoldBgColor,
+      body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance
             .collection('users')
             .where('role', isEqualTo: 'Driver')
@@ -85,7 +85,7 @@ class DriverCard extends StatelessWidget {
               IconButton(
                 icon: Icon(Icons.delete, color: Colors.red),
                 onPressed: () {
-                  _deleteDriver(driver.id);
+                  _deleteDriver(driver.id, context);
                 },
               ),
               IconButton(
@@ -101,25 +101,35 @@ class DriverCard extends StatelessWidget {
     );
   }
 
-  void _deleteDriver(String driverId) async {
+  Future<void> _deleteDriver(String driverId, BuildContext context) async {
     try {
       final driverRef =
           FirebaseFirestore.instance.collection('users').doc(driverId);
       final driverSnapshot = await driverRef.get();
 
       if (!driverSnapshot.exists) {
-        print('Driver not found');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content:
+                Text('Driver Not Found', style: TextStyle(color: Colors.red)),
+          ),
+        );
         return;
       }
 
       await driverRef.delete();
-      print('Driver successfully deleted');
-    } catch (e) {
-      print('Error deleting driver: $e');
-    }
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Driver successfully deleted',
+              style: TextStyle(color: Colors.green)),
+        ),
+      );
+    } catch (e) {}
   }
 
-  void _updateDriver(BuildContext context, QueryDocumentSnapshot driver) {
+  Future<void> _updateDriver(
+      BuildContext context, QueryDocumentSnapshot driver) async {
     final driverId = driver.id;
     final data = driver.data() as Map<String, dynamic>;
 
@@ -266,6 +276,9 @@ class DriverCard extends StatelessWidget {
                       if (value!.isEmpty) {
                         return "This field can't be empty";
                       }
+                      if (value.length != 15) {
+                        return "CNIC Number must be 13 digits";
+                      }
                       return null;
                     },
                     onChanged: (value) {
@@ -280,6 +293,7 @@ class DriverCard extends StatelessWidget {
                       LengthLimitingTextInputFormatter(13),
                       CNICNumberFormatter(), // Custom formatter for CNIC number
                     ],
+                    maxLength: 15,
                     cursorColor: ThemeColors.primaryColor,
                     decoration: InputDecoration(
                       fillColor: ThemeColors.textFieldBgColor,
@@ -333,14 +347,18 @@ class DriverCard extends StatelessWidget {
                     final driverSnapshot = await driverRef.get();
 
                     if (!driverSnapshot.exists) {
-                      print('Driver not found');
-                      return;
+                      //error for if driver dont exist
                     }
 
                     await driverRef.update(updatedData);
-                    print('Driver successfully updated');
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Driver Deatils Updated Successfully',
+                            style: TextStyle(color: Colors.green)),
+                      ),
+                    );
                   } catch (e) {
-                    print('Error updating driver: $e');
+                    //handle your exception here
                   }
                 }
               },
