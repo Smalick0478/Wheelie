@@ -85,7 +85,7 @@ class ParentCard extends StatelessWidget {
               IconButton(
                 icon: Icon(Icons.delete, color: Colors.red),
                 onPressed: () {
-                  _deleteParent(parent.id);
+                  _deleteParent(parent.id, context);
                 },
               ),
               IconButton(
@@ -101,21 +101,35 @@ class ParentCard extends StatelessWidget {
     );
   }
 
-  void _deleteParent(String ParentId) async {
+  void _deleteParent(String ParentId, BuildContext context) async {
     try {
       final ParentRef =
           FirebaseFirestore.instance.collection('users').doc(ParentId);
       final ParentSnapshot = await ParentRef.get();
 
       if (!ParentSnapshot.exists) {
-        print('Parent not found');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Parent Not Found!'),
+          ),
+        );
         return;
       }
 
       await ParentRef.delete();
-      print('Parent successfully deleted');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Parent Deleted Succesfully',
+              style: TextStyle(color: Colors.green)),
+        ),
+      );
     } catch (e) {
-      print('Error deleting Parent: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error Deleting Parent!',
+              style: TextStyle(color: Colors.red)),
+        ),
+      );
     }
   }
 
@@ -294,14 +308,12 @@ class ParentCard extends StatelessWidget {
                     final ParentSnapshot = await ParentRef.get();
 
                     if (!ParentSnapshot.exists) {
-                      print('Parent not found');
-                      return;
+                      //if parent doesnt exist
                     }
 
                     await ParentRef.update(updatedData);
-                    print('Parent successfully updated');
                   } catch (e) {
-                    print('Error updating Parent: $e');
+                    //handle your exception here
                   }
                 }
               },
