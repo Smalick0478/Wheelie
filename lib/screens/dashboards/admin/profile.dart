@@ -7,8 +7,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:wheelie/components/main_button.dart';
+import 'package:wheelie/helpers/current_logged_person.dart';
 import 'package:wheelie/helpers/font_size.dart';
 import 'package:wheelie/helpers/theme_colors.dart';
+import 'package:wheelie/helpers/utils.dart';
 import 'package:wheelie/pages/login_page.dart';
 import 'package:firebase_database/firebase_database.dart';
 
@@ -98,28 +100,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
-  Future<void> updateNameAndProfilePic(
-      String newName, String newEmail, String newProfilePicUrl) async {
-    var userCollection = FirebaseFirestore.instance.collection('users');
-    var querySnapshot =
-        await userCollection.where('role', isEqualTo: 'Admin').limit(1).get();
-
-    if (querySnapshot.docs.isEmpty) {
-      // No admin user found, create a new document
-      await userCollection.add({
-        'Name': newName,
-        'profilepic': newProfilePicUrl,
-        'role': 'Admin',
-      });
-    } else {
-      // Admin user found, update the existing document
-      var docId = querySnapshot.docs.first.id;
-      await userCollection.doc(docId).update({
-        'Name': newName,
-        'email': newEmail,
-        'profilepic': newProfilePicUrl, // Use newProfilePicUrl here
-      });
+  Future<void> updateNameAndProfilePic(String newName, String newEmail) async {
+    final user = FirebaseAuth.instance.currentUser;
+    String? userId = user?.uid;
+    if (userId == null) {
+      // No user logged in, handle the error or return
+      return;
     }
+
+    var userCollection = FirebaseFirestore.instance.collection('users');
+    var userDoc = userCollection.doc(userId);
+
+    await userDoc.update({
+      'Name': newName,
+      'email': newEmail,
+    }).then((value) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Fields Updated Successfully'),
+        ),
+      );
+    }).catchError((error) {
+      print('Error updating document: $error');
+    });
   }
 
   @override
@@ -182,32 +185,48 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         },
                       );
                     },
-                    child: StreamBuilder(
-                      stream: FirebaseFirestore.instance
-                          .collection('users')
-                          .where('role', isEqualTo: 'Admin')
-                          .snapshots(),
+                    child: FutureBuilder<String>(
+                      future: fetchCurrentUserID(),
                       builder: (context, snapshot) {
-                        if (!snapshot.hasData || snapshot.data == null) {
-                          return CircularProgressIndicator();
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const CircularProgressIndicator();
                         }
 
-                        var documents = snapshot.data?.docs;
-                        if (documents == null || documents.isEmpty) {
-                          return Text('No admin user found.');
+                        if (!snapshot.hasData || snapshot.data == 'Unknown') {
+                          return const Text('No User found.');
                         }
 
-                        var user = documents[0].data();
-                        var name = user['Name'];
-                        var email = user['email'];
-                        var imageUrl = user['profilepic'];
+                        var userId = snapshot.data;
+                        return StreamBuilder<DocumentSnapshot>(
+                          stream: FirebaseFirestore.instance
+                              .collection('users')
+                              .doc(userId)
+                              .snapshots(),
+                          builder: (context, snapshot) {
+                            if (!snapshot.hasData || snapshot.data == null) {
+                              return const CircularProgressIndicator();
+                            }
 
-                        return CircleAvatar(
-                          radius: 80.0,
-                          backgroundImage: (imageUrl != null)
-                              ? NetworkImage(imageUrl)
-                              : AssetImage('images/avatar.png')
-                                  as ImageProvider,
+                            var user = snapshot.data!.data()
+                                    as Map<String, dynamic>? ??
+                                {};
+                            if (user == null) {
+                              return const Text('User not found.');
+                            }
+
+                            var name = user['Name'] as String? ?? '';
+                            var email = user['email'] as String? ?? '';
+                            var imageUrl = user['profilepic'] as String? ?? '';
+
+                            return CircleAvatar(
+                              radius: 80.0,
+                              backgroundImage: (imageUrl != null)
+                                  ? NetworkImage(imageUrl)
+                                  : const AssetImage('images/avatar.png')
+                                      as ImageProvider,
+                            );
+                          },
                         );
                       },
                     ),
@@ -299,8 +318,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               await uploadImageToFirestoreStorage();
 
                               // Update Firestore document
-                              updateNameAndProfilePic(
-                                  newName, newEmail, newProfilePicUrl);
+                              updateNameAndProfilePic(newName, newEmail);
                             } else {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
@@ -329,17 +347,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
             );
           },
         ),
-      ),
-    );
-  }
-
-  Future<void> logout(BuildContext context) async {
-    CircularProgressIndicator();
-    await FirebaseAuth.instance.signOut();
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (context) => LoginPage(),
       ),
     );
   }
