@@ -9,8 +9,10 @@ import 'package:wheelie/helpers/error_dialog_box.dart';
 import 'package:wheelie/helpers/font_size.dart';
 import 'package:wheelie/helpers/no_internet_connection.dart';
 import 'package:wheelie/helpers/theme_colors.dart';
+import 'package:wheelie/pages/email_verification.dart';
 import 'package:wheelie/pages/login_page.dart';
 import 'package:flutter/services.dart';
+import 'package:bcrypt/bcrypt.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({Key? key}) : super(key: key);
@@ -33,6 +35,7 @@ class _SignUpPageState extends State<SignUpPage> {
   var role = "Driver";
   bool _isPasswordVisible = false;
   bool _isConfirmPasswordVisible = false;
+  bool _isSigningUp = false;
 
   @override
   void dispose() {
@@ -78,7 +81,7 @@ class _SignUpPageState extends State<SignUpPage> {
                     ),
                   ),
                 ),
-                SizedBox(height: 70),
+                const SizedBox(height: 70),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -105,7 +108,7 @@ class _SignUpPageState extends State<SignUpPage> {
                         ),
                       ),
                     ),
-                    SizedBox(width: 16),
+                    const SizedBox(width: 16),
                     ElevatedButton(
                       onPressed: () {
                         setState(() {
@@ -131,7 +134,7 @@ class _SignUpPageState extends State<SignUpPage> {
                     ),
                   ],
                 ),
-                SizedBox(height: 70),
+                const SizedBox(height: 70),
                 Form(
                   key: _formKey,
                   child: Column(
@@ -141,7 +144,10 @@ class _SignUpPageState extends State<SignUpPage> {
                         controller: _nameController,
                         validator: (value) {
                           if (value!.isEmpty) {
-                            return "This field can't be empty";
+                            return ("This field can't be empty");
+                          }
+                          if (!RegExp(r'^[a-zA-Z ]+$').hasMatch(value)) {
+                            return ("Only alphabets are allowed");
                           }
                           return null;
                         },
@@ -159,13 +165,13 @@ class _SignUpPageState extends State<SignUpPage> {
                             fontSize: FontSize.medium,
                             fontWeight: FontWeight.w400,
                           ),
-                          border: OutlineInputBorder(
+                          border: const OutlineInputBorder(
                             borderSide: BorderSide.none,
                             borderRadius: BorderRadius.all(Radius.circular(18)),
                           ),
                         ),
                       ),
-                      SizedBox(height: 16),
+                      const SizedBox(height: 16),
 
                       ///E-mail Input Field
                       TextFormField(
@@ -194,13 +200,13 @@ class _SignUpPageState extends State<SignUpPage> {
                             fontSize: FontSize.medium,
                             fontWeight: FontWeight.w400,
                           ),
-                          border: OutlineInputBorder(
+                          border: const OutlineInputBorder(
                             borderSide: BorderSide.none,
                             borderRadius: BorderRadius.all(Radius.circular(18)),
                           ),
                         ),
                       ),
-                      SizedBox(height: 16),
+                      const SizedBox(height: 16),
 
                       ///Phone Input Field
                       TextFormField(
@@ -217,6 +223,7 @@ class _SignUpPageState extends State<SignUpPage> {
                         style: GoogleFonts.poppins(
                           color: ThemeColors.whiteTextColor,
                         ),
+
                         cursorColor: ThemeColors.primaryColor,
                         keyboardType: TextInputType.phone,
                         maxLength:
@@ -230,7 +237,7 @@ class _SignUpPageState extends State<SignUpPage> {
                             fontSize: FontSize.medium,
                             fontWeight: FontWeight.w400,
                           ),
-                          border: OutlineInputBorder(
+                          border: const OutlineInputBorder(
                             borderSide: BorderSide.none,
                             borderRadius: BorderRadius.all(Radius.circular(18)),
                           ),
@@ -247,6 +254,9 @@ class _SignUpPageState extends State<SignUpPage> {
                                 if (value!.isEmpty) {
                                   return "This field can't be empty";
                                 }
+                                if (value.length != 15) {
+                                  return "CNIC number must be 13 digits";
+                                }
                                 return null;
                               },
                               style: GoogleFonts.poppins(
@@ -258,6 +268,7 @@ class _SignUpPageState extends State<SignUpPage> {
                                 LengthLimitingTextInputFormatter(13),
                                 CNICNumberFormatter(), // Custom formatter for CNIC number
                               ],
+                              maxLength: 15,
                               cursorColor: ThemeColors.primaryColor,
                               decoration: InputDecoration(
                                 fillColor: ThemeColors.textFieldBgColor,
@@ -268,14 +279,13 @@ class _SignUpPageState extends State<SignUpPage> {
                                   fontSize: FontSize.medium,
                                   fontWeight: FontWeight.w400,
                                 ),
-                                border: OutlineInputBorder(
+                                border: const OutlineInputBorder(
                                   borderSide: BorderSide.none,
                                   borderRadius:
                                       BorderRadius.all(Radius.circular(18)),
                                 ),
                               ),
                             ),
-                            SizedBox(height: 16),
                           ],
                         ),
 
@@ -312,7 +322,7 @@ class _SignUpPageState extends State<SignUpPage> {
                             fontSize: FontSize.medium,
                             fontWeight: FontWeight.w400,
                           ),
-                          border: OutlineInputBorder(
+                          border: const OutlineInputBorder(
                             borderSide: BorderSide.none,
                             borderRadius: BorderRadius.all(Radius.circular(18)),
                           ),
@@ -331,7 +341,7 @@ class _SignUpPageState extends State<SignUpPage> {
                           ),
                         ),
                       ),
-                      SizedBox(height: 16),
+                      const SizedBox(height: 16),
                       TextFormField(
                         controller: _confirmpasswordController,
                         validator: (value) {
@@ -360,7 +370,7 @@ class _SignUpPageState extends State<SignUpPage> {
                             fontSize: FontSize.medium,
                             fontWeight: FontWeight.w400,
                           ),
-                          border: OutlineInputBorder(
+                          border: const OutlineInputBorder(
                             borderSide: BorderSide.none,
                             borderRadius: BorderRadius.all(Radius.circular(18)),
                           ),
@@ -381,19 +391,47 @@ class _SignUpPageState extends State<SignUpPage> {
                         ),
                       ),
 
-                      SizedBox(height: 70),
-                      MainButton(
-                        text: 'Sign Up',
-                        backgroundColor: ThemeColors.YellowColor,
-                        onTap: () {
-                          signUp(
-                              _nameController.text,
-                              _emailController.text,
-                              _phoneController.text,
-                              _passwordController.text,
-                              _cnicController.text,
-                              role);
-                        },
+                      const SizedBox(height: 70),
+
+                      Stack(
+                        children: [
+                          MainButton(
+                            text: _isSigningUp ? '' : 'Signup',
+                            onTap: () async {
+                              if (_formKey.currentState!.validate()) {
+                                setState(() {
+                                  _isSigningUp =
+                                      true; // Set the signing up flag to true
+                                });
+                                signUp(
+                                  context,
+                                  _nameController.text,
+                                  _emailController.text,
+                                  _phoneController.text,
+                                  _passwordController.text,
+                                  _cnicController.text,
+                                  role,
+                                ).then((success) {
+                                  setState(() {
+                                    _isSigningUp =
+                                        false; // Set the signing up flag back to false
+                                  });
+                                });
+                              }
+                            },
+                            backgroundColor: ThemeColors.YellowColor,
+                            textColor: _isSigningUp ? Colors.transparent : null,
+                          ),
+                          if (_isSigningUp)
+                            const Positioned.fill(
+                              child: Center(
+                                child: CircularProgressIndicator(
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                      Colors.white),
+                                ),
+                              ),
+                            ),
+                        ],
                       ),
                     ],
                   ),
@@ -406,55 +444,84 @@ class _SignUpPageState extends State<SignUpPage> {
     );
   }
 
-  void signUp(String fullname, String email, String phone, String password,
-      String cnic, String role) async {
+  Future<void> signUp(BuildContext context, String fullname, String email,
+      String phone, String password, String cnic, String role) async {
     if (_formKey.currentState!.validate()) {
       try {
         bool userExists = await isUserExistsInFirestore(email);
+        bool userPhoneExists = await isUserPhoneExistsInFirestore(phone);
 
-        if (!userExists) {
+        if (!userExists && !userPhoneExists) {
           // User is a new user, proceed with registration
           final result = await FirebaseAuth.instance
               .createUserWithEmailAndPassword(email: email, password: password);
 
           if (result.additionalUserInfo!.isNewUser) {
             // Store user details in Firestore
-            postDetailsToFirestore(fullname, email, phone, role, cnic);
+            postDetailsToFirestore(
+                fullname, email, phone, role, cnic, password);
           }
 
           Navigator.pushReplacement(
-              context, MaterialPageRoute(builder: (context) => LoginPage()));
-        } else {
-          // User is already registered, show dialog box
+            context,
+            MaterialPageRoute(
+                builder: (context) => EmailVerificationPage(email: email)),
+          );
+        } else if (userPhoneExists) {
+          // Phone number is already registered
+          userAlreadyRegistered(context);
+        } else if (userExists) {
+          // Email is already registered
           userAlreadyRegistered(context);
         }
+      } on FirebaseAuthException catch (e) {
+        if (e.code == 'network-request-failed') {
+          // Handle no internet connection error
+          noInternetConnection(context);
+        } else {
+          // Handle other registration errors
+          print('Registration error: ${e.message}');
+        }
       } catch (e) {
-        // Handle registration error
-        noInternetConnection(context);
+        print('Error: $e');
       }
     }
   }
 
-  void postDetailsToFirestore(String fullname, String email, String phone,
-      String role, String cnic) async {
+  Future<void> postDetailsToFirestore(String fullname, String email,
+      String phone, String role, String cnic, String password) async {
     FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
     var user = FirebaseAuth.instance.currentUser;
     CollectionReference ref = firebaseFirestore.collection('users');
 
     if (role == "Driver") {
+      phone = "+92" + phone.replaceFirst(RegExp('^0'), '');
+
       await ref.doc(user!.uid).set({
         'Name': fullname,
         'email': email,
         'Phone': phone,
         'cnic': cnic,
         'role': role,
+        'password': password,
+        'profilepic':
+            "https://firebasestorage.googleapis.com/v0/b/wheelie-90ade.appspot.com/o/avatar.png?alt=media&token=f9abbc18-e075-4994-b671-e39fb043afcf",
+        'cnicpic':
+            "https://firebasestorage.googleapis.com/v0/b/wheelie-90ade.appspot.com/o/License_Front.png?alt=media&token=955431ef-d2de-41d4-b5ce-0ac453d99fe7",
+        'licensepic':
+            "https://firebasestorage.googleapis.com/v0/b/wheelie-90ade.appspot.com/o/License_Back.png?alt=media&token=2e180e9e-3a50-4fb2-8993-e414a41d67e1",
       });
     } else if (role == "Parent") {
+      phone = "+92" + phone.replaceAll(RegExp('^0'), '');
+
       await ref.doc(user!.uid).set({
         'Name': fullname,
         'email': email,
         'Phone': phone,
         'role': role,
+        'profilepic':
+            "https://firebasestorage.googleapis.com/v0/b/wheelie-90ade.appspot.com/o/avatar.png?alt=media&token=f9abbc18-e075-4994-b671-e39fb043afcf",
+        'password': password,
       });
     }
   }
@@ -467,5 +534,15 @@ class _SignUpPageState extends State<SignUpPage> {
         await usersCollection.where('email', isEqualTo: email).limit(1).get();
 
     return querySnapshot.docs.isNotEmpty; // Returns true if the user exists
+  }
+
+  Future<bool> isUserPhoneExistsInFirestore(String phone) async {
+    CollectionReference usersCollection =
+        FirebaseFirestore.instance.collection('users');
+    phone = "+92" + phone.replaceAll(RegExp('^0'), '');
+    var querySnapshot =
+        await usersCollection.where('Phone', isEqualTo: phone).limit(1).get();
+
+    return querySnapshot.docs.isNotEmpty; // Returns true if the number exists
   }
 }
