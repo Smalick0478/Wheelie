@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -11,12 +13,19 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   late String _currentDate;
   late String _currentTime;
+  late Timer _clockTimer;
 
   @override
   void initState() {
     super.initState();
     _updateDateTime();
     _startClock();
+  }
+
+  @override
+  void dispose() {
+    _clockTimer.cancel();
+    super.dispose();
   }
 
   void _updateDateTime() {
@@ -32,9 +41,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _startClock() {
     // Update the time every minute
-    Future.delayed(Duration(minutes: 1), () {
+    _clockTimer = Timer.periodic(Duration(minutes: 1), (timer) {
       _updateDateTime();
-      _startClock();
     });
   }
 
