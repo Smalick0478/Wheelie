@@ -1,10 +1,9 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:wheelie/helpers/current_logged_person.dart';
+import 'package:wheelie/helpers/font_size.dart';
 import 'package:wheelie/helpers/theme_colors.dart';
-import 'package:wheelie/pages/login_page.dart';
+import 'package:wheelie/helpers/utils.dart';
 
 // Admin
 import 'package:wheelie/screens/dashboards/admin/admin_home.dart';
@@ -31,11 +30,11 @@ class _AdminDashboardState extends State<AdminDashboard> {
   @override
   void initState() {
     super.initState();
-    fetchCurrentUserName().then((name) {
-      setState(() {
-        adminName = name;
-      });
-    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   @override
@@ -53,32 +52,52 @@ class _AdminDashboardState extends State<AdminDashboard> {
           padding: EdgeInsets.zero,
           children: <Widget>[
             DrawerHeader(
-              decoration: BoxDecoration(
-                color: ThemeColors.YellowColor,
+              decoration: const BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage('images/loginbg.png'),
+                  fit: BoxFit.contain,
+                ),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     'Wheelie',
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 24,
+                    style: GoogleFonts.poppins(
+                      color: ThemeColors.titleColor,
+                      fontSize: FontSize.xxxLarge,
+                      fontWeight: FontWeight.w900,
                     ),
                   ),
-                  SizedBox(height: 8), // Add some spacing between the texts
-                  Expanded(
-                    child: Align(
-                      alignment: Alignment.bottomLeft,
-                      child: Text(
-                        'UserName: $adminName',
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 16,
+                  SizedBox(height: 15), // Add some spacing between the texts
+                  StreamBuilder<String>(
+                    stream: fetchCurrentUserName(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const CircularProgressIndicator();
+                      }
+
+                      if (!snapshot.hasData || snapshot.data == 'Unknown') {
+                        return const Text('User not found.');
+                      }
+
+                      var adminName = snapshot.data;
+
+                      return Expanded(
+                        child: Align(
+                          alignment: Alignment.bottomLeft,
+                          child: Text(
+                            'UserName: $adminName',
+                            style: GoogleFonts.poppins(
+                              color: ThemeColors.titleColor,
+                              fontSize: FontSize.xMedium,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
-                  ),
+                      );
+                    },
+                  )
                 ],
               ),
             ),
@@ -146,7 +165,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
             Colors.black, // Set the selected item text color to yellow
         unselectedItemColor: ThemeColors
             .YellowColor, // Set the unselected item text color to black
-        items: [
+        items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: 'Home',
@@ -164,17 +183,6 @@ class _AdminDashboardState extends State<AdminDashboard> {
             label: 'Profile',
           ),
         ],
-      ),
-    );
-  }
-
-  Future<void> logout(BuildContext context) async {
-    CircularProgressIndicator();
-    await FirebaseAuth.instance.signOut();
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (context) => LoginPage(),
       ),
     );
   }
