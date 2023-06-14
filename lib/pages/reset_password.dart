@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:wheelie/components/main_button.dart';
+import 'package:wheelie/helpers/error_dialog_box.dart';
 import 'package:wheelie/helpers/font_size.dart';
 import 'package:wheelie/helpers/theme_colors.dart';
 import 'package:wheelie/pages/signup_page.dart';
@@ -28,101 +29,9 @@ class _PasswordResetPageState extends State<PasswordResetPage> {
       });
       try {
         await _auth.sendPasswordResetEmail(email: _emailController.text);
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              backgroundColor: Colors.black,
-              title: Row(
-                children: [
-                  Icon(
-                    Icons.check_circle,
-                    color: Colors.green,
-                  ),
-                  SizedBox(width: 8),
-                  Text(
-                    'Email Sent',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                ],
-              ),
-              content: Row(
-                children: [
-                  SizedBox(width: 8),
-                  Text(
-                    'A password reset link has been sent \nto your email address.',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                ],
-              ),
-              actions: [
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    primary:
-                        Colors.black, // Set button background color to black
-                  ),
-                  onPressed: () {
-                    Navigator.of(context).pop(); // Close the dialog
-                  },
-                  child: Text(
-                    'OK',
-                    style: TextStyle(
-                      color: Colors.white, // Set button text color to white
-                    ),
-                  ),
-                ),
-              ],
-            );
-          },
-        );
+        forgotPasswordLinkSent(context);
       } catch (e) {
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              backgroundColor: Colors.black,
-              title: Row(
-                children: [
-                  Icon(
-                    Icons.error,
-                    color: Colors.red,
-                  ),
-                  SizedBox(width: 8),
-                  Text(
-                    'Error Occurred',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                ],
-              ),
-              content: Row(
-                children: [
-                  SizedBox(width: 8),
-                  Text(
-                    'An error occurred while \nresetting your password. \nPlease try again later.',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                ],
-              ),
-              actions: [
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    primary:
-                        Colors.black, // Set button background color to black
-                  ),
-                  onPressed: () {
-                    Navigator.of(context).pop(); // Close the dialog
-                  },
-                  child: Text(
-                    'OK',
-                    style: TextStyle(
-                      color: Colors.white, // Set button text color to white
-                    ),
-                  ),
-                ),
-              ],
-            );
-          },
-        );
+        forgotPasswordLinkSentError(context);
       }
       setState(() {
         _isSubmitting = false;
